@@ -11,7 +11,6 @@ wget https://www.snort.org/downloads/snort/daq-2.0.6.tar.gz
 wget https://www.snort.org/downloads/snort/snort-2.9.13.tar.gz
 tar -xvzf daq-2.0.6.tar.gz
 tar -xvzf snort-2.9.13.tar.gz
-rm *\.tar\.gz
 
 # Build snort from source
 cd $HOME/snort_src/daq-2.0.6
