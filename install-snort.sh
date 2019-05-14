@@ -48,4 +48,8 @@ sudo sed -i 's/include \$RULE\_PATH/#include \$RULE\_PATH/' /etc/snort/snort.con
 
 cd $CURDIR
 # Follow normal directions from here (remember to put local machine IP instead of server_public_ip/32
-echo 'Assuming no errors, snort should now be installed. You should now be able to follow the guide starting at "Configuring the network and rule set"'
+echo '==========================================================='
+echo '==========================================================='
+echo
+echo 'Assuming no errors occured, snort should now be installed.'
+echo 'You should now be able to follow the guide starting at "Configuring the network and rule set"'
