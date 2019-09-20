@@ -30,23 +30,14 @@ device=$(dialog --stdout --menu "Select installation disk" 0 0 0 ${devicelist}) 
 clear
 
 timedatectl set-ntp true
+echo 'Refreshing keyring...'
+pacman-key --refresh-keys
 
 # put user into fdisk
 fdisk "${device}"
 
 # start logging
 exec &> >(tee "install.log")
-
-# Install pacman-contrib and update mirrorlist
-pacman -Q pacman-contrib &>/dev/null || sudo pacman -Syq --noconfirm pacman-contrib
-echo 'Creating backup of old mirrorlist...'
-cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.bak
-
-echo 'Pulling current mirrorlist from archlinux.org/mirrorlist...'
-curl -s "https://www.archlinux.org/mirrorlist/?country=US&protocol=https&ip_version=4&ip_version=6&uuse_mirror_status=on" | sed -e 's/^#Server/Server/' -e '/^## U/d' | rankmirrors -n 5 - > /etc/pacman.d/mirrorlist
-
-pacman -Syy && echo 'pacman mirrorlist updated.'
-pacman-key --refresh-keys && echo 'pacman keyring updated.'
 
 # allow user to assign partitions
 part_list=$(lsblk -pnx name | grep -E "$device.+part" | awk '{print $1, $4}')
@@ -72,14 +63,19 @@ mount "${part_root}" /mnt
 mkdir /mnt/boot
 mount "${part_boot}" /mnt/boot
 
+# Install pacman-contrib and update mirrorlist
+pacman -Q pacman-contrib &>/dev/null || sudo pacman -Syq --noconfirm pacman-contrib
+cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.bak
+
+curl -s "https://www.archlinux.org/mirrorlist/?country=US&protocol=https&ip_version=4&ip_version=6&uuse_mirror_status=on" | sed -e 's/^#Server/Server/' -e '/^## U/d' | rankmirrors -n 5 - > /etc/pacman.d/mirrorlist
+
 # begin arch install
-pacstrap /mnt base base-devel
+pacstrap /mnt base base-devel intel-ucode
 genfstab -U /mnt >> /mnt/etc/fstab
 
 # set timezone and clock
-ln -sf /usr/share/zoneinfo/America/Los_Angeles /etc/localtime
-hwclock --systohc
-date
+ln -sf /mnt/usr/share/zoneinfo/America/Los_Angeles /mnt/etc/localtime
+arch-chroo /mnt hwclock --systohc
 
 # Set language
 sed -i 's/#en_US.UTF-8/en_US.UTF-8/' /mnt/etc/locale.gen
@@ -125,7 +121,7 @@ title Arch Linux
 linux /vmlinuz-linux
 initrd /intel-ucode.img
 initrd /initramfs-linux.img
-options root=PARTUUID=$(blkid -s PARTUUID -o value "$part_root") rw quiet
+options root=PARTUUID=$(blkid -s PARTUUID -o value "${part_root}") rw quiet
 EOF
 
 # Make pacman pretty
@@ -142,7 +138,7 @@ FONT_MAP=8859-2
 EOF
 
 # remove programs
-arch-chroot /mnt pacman -R --noconfirm nano
+arch-chroot /mnt pacman -Rq --noconfirm nano
 
 # add admin user
 arch-chroot /mnt useradd -mU -G wheel,uucp,video,audio,storage,games,input "$username"
@@ -151,5 +147,5 @@ echo "$username:$password" | chpasswd --root /mnt
 echo "root:$password" | chpasswd --root /mnt
 
 # Exit info
-echo "Main install done. Edit sudoers with visudo, disable root password passwd -l root"
+echo "\nMain install done. Edit sudoers with visudo, disable root password passwd -l root"
 echo "umount -R /mnt; reboot and remove iso"
