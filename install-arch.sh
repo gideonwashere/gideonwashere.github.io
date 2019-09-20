@@ -23,31 +23,31 @@ password2=$(dialog --stdout --passwordbox "Enter admin password agian" 0 0)
 clear
 [[ "$password" == "$password2" ]] || ( echo "Passwords did not match"; exit 1; )
 
-### Install Start ###
-
 devicelist=$(lsblk -dplnx size -o name,size | grep -Ev "boot|rpmb|loop" | tac)
 device=$(dialog --stdout --menu "Select installation disk" 0 0 0 ${devicelist}) || exit 1
 clear
+
+# put user into fdisk
+fdisk "${device}"
+
+# allow user to assign partitions
+part_list=$(lsblk -pnx name | grep -E "$device.+part" | awk '{print $1, $4}')
+part_boot=$(dialog --stdout --menu "Select boot partition" 0 0 0 ${part_list}) || exit 1
+clear
+part_list=$(echo "$part_list" | grep -v "$part_boot")
+part_root=$(dialog --stdout --menu "Select root partition" 0 0 0 ${part_list}) || exit 1
+clear
+part_list=$(echo "$part_list" | grep -v "$part_root")
+part_swap=$(dialog --stdout --menu "Select swap partition" 0 0 0 ${part_list}) || exit 1
+
+### Install Start ###
 
 timedatectl set-ntp true
 echo 'Refreshing keyring...'
 pacman-key --refresh-keys
 
-# put user into fdisk
-fdisk "${device}"
-
 # start logging
 exec &> >(tee "install.log")
-
-# allow user to assign partitions
-part_list=$(lsblk -pnx name | grep -E "$device.+part" | awk '{print $1, $4}')
-part_boot=$(dialog --stdout --menu "Select boot partition" 0 0 0 ${part_list})
-clear
-part_list=$(echo "$part_list" | grep -v "$part_boot")
-part_root=$(dialog --stdout --menu "Select root partition" 0 0 0 ${part_list})
-clear
-part_list=$(echo "$part_list" | grep -v "$part_root")
-part_swap=$(dialog --stdout --menu "Select swap partition" 0 0 0 ${part_list})
 
 # format partitions
 wipefs "${part_boot}"
