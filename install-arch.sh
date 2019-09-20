@@ -29,13 +29,24 @@ devicelist=$(lsblk -dplnx size -o name,size | grep -Ev "boot|rpmb|loop" | tac)
 device=$(dialog --stdout --menu "Select installation disk" 0 0 0 ${devicelist}) || exit 1
 clear
 
-# start logging
-exec $> >(tee "install.log")
-
 timedatectl set-ntp true
 
 # put user into fdisk
 fdisk "${device}"
+
+# start logging
+exec &> >(tee "install.log")
+
+# Install pacman-contrib and update mirrorlist
+pacman -Q pacman-contrib &>/dev/null || sudo pacman -Syq --noconfirm pacman-contrib
+echo 'Creating backup of old mirrorlist...'
+cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.bak
+
+echo 'Pulling current mirrorlist from archlinux.org/mirrorlist...'
+curl -s "https://www.archlinux.org/mirrorlist/?country=US&protocol=https&ip_version=4&ip_version=6&uuse_mirror_status=on" | sed -e 's/^#Server/Server/' -e '/^## U/d' | rankmirrors -n 5 - > /etc/pacman.d/mirrorlist
+
+pacman -Syy && echo 'pacman mirrorlist updated.'
+pacman-key --refresh-keys && echo 'pacman keyring updated.'
 
 # allow user to assign partitions
 part_list=$(lsblk -pnx name | grep -E "$device.+part" | awk '{print $1, $4}')
