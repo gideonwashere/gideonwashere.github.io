@@ -4,8 +4,17 @@
 set -uo pipefail
 trap 's=$?; echo "$0: Error on line "$LINENO": $BASH_COMMAND; exit $s' ERR
 
+echo -n "Use large font? [y/N] "
+read large_font
+if [[ ${large_font,,} == "y" ]] ; then
+    setfont latarcyrheb-sun32
+fi
+
 # Check for EFI
-[[ $(ls /sys/firmware/efi/efivars | wc -l) -gt 0 ]] || ( echo "No EFI detected. This script is for EFI systems only."; exit 1; )
+if [[ $(ls /sys/firmware/efi/efivars 2> /dev/null | wc -l) -eq 0 ]] ; then
+    echo "No EFI detected. This script is for EFI systems only."
+    exit 1
+fi
 
 # Get user parameters
 echo -n "Enter hostname: "
@@ -19,8 +28,10 @@ read username
 echo -n "Enter admin password: "
 read -s password
 : ${password:?'password cannot be empty'}
+echo
 echo -n "Enter admin password again: "
 read -s password2
+echo
 [[ "$password" == "$password2" ]] || ( echo "Passwords did not match"; exit 1; )
 
 devicelist=$(lsblk -dplnx size -o name,size | grep -Ev "boot|rpmb|loop" | tac)
@@ -40,8 +51,8 @@ echo "BOOT: 550MB"
 echo "SWAP: ${swap_size}MB"
 echo "ROOT: Rest of Drive"
 echo
-echo -n "Do you wish to continue? [Y/n] "
 
+echo -n "Do you wish to continue? [Y/n] "
 read confirm
 [[ $confirm == "n" ]] && exit 1
 
@@ -155,21 +166,26 @@ grep "^Color" /mnt/etc/pacman.conf > /dev/null || sed -i "s/^#Color/Color/" /mnt
 arch-chroot /mnt rmmod pcspkr
 echo "blacklist pcspkr" > /mnt/etc/modprobe.d/nobeep.conf
 
-# Make default tty font bigger
+# Make large font permanent
+if [[ ${large_font,,} == "y" ]] ; then
 cat > /mnt/etc/vconsole.conf << EOF
 FONT=latarcyrheb-sun32
 FONT_MAP=8859-2
 EOF
+fi
 
 # remove programs
-arch-chroot /mnt pacman -Rq --noconfirm nano
+arch-chroot /mnt pacman -R --noconfirm nano
 
 # add admin user
 arch-chroot /mnt useradd -mU -G wheel,uucp,video,audio,storage,games,input "$username"
 
-echo "$username:$password" | chpasswd --root /mnt
-echo "root:$password" | chpasswd --root /mnt
+# Change user and root passwords need to
+
+echo "$username:$password" | arch-chroot /mnt chpasswd
+echo "root:$password" | arch-chroot /mnt chpasswd
 
 # Exit info
-echo "\nMain install done. Edit sudoers with visudo, disable root password passwd -l root"
+echo
+echo "Main install done. Edit sudoers with visudo, disable root password passwd -l root"
 echo "umount -R /mnt; reboot and remove iso"
