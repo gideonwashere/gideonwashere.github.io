@@ -32,7 +32,10 @@ echo
 echo -n "Enter admin password again: "
 read -s password2
 echo
-[[ "$password" == "$password2" ]] || ( echo "Passwords did not match"; exit 1; )
+if [[ "$password" == "$password2" ]] ; then
+    echo "Passwords did not match"
+    exit 1
+fi
 
 devicelist=$(lsblk -dplnx size -o name,size | grep -Ev "boot|rpmb|loop" | tac)
 device=$(dialog --stdout --menu "Select installation disk" 0 0 0 ${devicelist}) || exit 1
@@ -54,7 +57,7 @@ echo
 
 echo -n "Do you wish to continue? [Y/n] "
 read confirm
-[[ $confirm == "n" ]] && exit 1
+[[ ${confirm,,} == "n" ]] && exit 1
 
 ### Install Start ###
 
@@ -68,13 +71,6 @@ parted --script "${device}" mklabel gpt \
 part_boot="${device}1"
 part_swap="${device}2"
 part_root="${device}3"
-
-lsblk
-echo "$part_boot $part_swap $part_root"
-
-echo -n "Do you wish to continue? [Y/n] "
-read confirm
-[[ $confirm == "n" ]] && exit 1
 
 # set time and refresh keys
 timedatectl set-ntp true
@@ -110,7 +106,7 @@ genfstab -U /mnt >> /mnt/etc/fstab
 
 # set timezone and clock
 ln -sf /mnt/usr/share/zoneinfo/America/Los_Angeles /mnt/etc/localtime
-arch-chroo /mnt hwclock --systohc
+arch-chroot /mnt hwclock --systohc
 
 # Set language
 sed -i 's/#en_US.UTF-8/en_US.UTF-8/' /mnt/etc/locale.gen
