@@ -8,19 +8,19 @@ trap 's=$?; echo "$0: Error on line "$LINENO": $BASH_COMMAND; exit $s' ERR
 [[ $(ls /sys/firmware/efi/efivars | wc -l) -gt 0 ]] || ( echo "No EFI detected. This script is for EFI systems only."; exit 1; )
 
 # Get user parameters
-hostname=$(dialog --stdout --inputbox "Enter hostname" 0 0) || exit 1
-clear
+echo -n "Enter hostname: "
+read hostname
 : ${hostname:?'hostname cannot be empty'}
 
-username=$(dialog --stdout --inputbox "Enter admin username" 0 0) || exit 1
-clear
+echo -n "Enter admin username: "
+read username
 : ${username:?'username cannot be empty'}
 
-password=$(dialog --stdout --passwordbox "Enter admin password" 0 0) || exit 1
-clear
+echo -n "Enter admin password: "
+read -s password
 : ${password:?'password cannot be empty'}
-password2=$(dialog --stdout --passwordbox "Enter admin password agian" 0 0)
-clear
+echo -n "Enter admin password again: "
+read -s password2
 [[ "$password" == "$password2" ]] || ( echo "Passwords did not match"; exit 1; )
 
 devicelist=$(lsblk -dplnx size -o name,size | grep -Ev "boot|rpmb|loop" | tac)
@@ -36,7 +36,7 @@ echo "HOSTNAME: $hostname"
 echo "USERNAME: $username"
 echo
 echo "Drive $device with be wiped and the following partitions with be created..."
-echo "ESP: 550MB"
+echo "BOOT: 550MB"
 echo "SWAP: ${swap_size}MB"
 echo "ROOT: Rest of Drive"
 echo
@@ -58,6 +58,7 @@ part_boot="${device}1"
 part_swap="${device}2"
 part_root="${device}3"
 
+lsblk
 echo "$part_boot $part_swap $part_root"
 
 echo -n "Do you wish to continue? [Y/n] "
