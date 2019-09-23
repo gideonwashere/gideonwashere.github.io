@@ -27,21 +27,44 @@ devicelist=$(lsblk -dplnx size -o name,size | grep -Ev "boot|rpmb|loop" | tac)
 device=$(dialog --stdout --menu "Select installation disk" 0 0 0 ${devicelist}) || exit 1
 clear
 
-# put user into fdisk
-fdisk "${device}"
+# calculated size of swap partition
+swap_size=$(free --mebi | awk '/Mem:/ {print $2}')
+swap_end=$(( $swap_size + 550 + 1))MiB
 
-# allow user to assign partitions
-part_list=$(lsblk -pnx name | grep -E "$device.+part" | awk '{print $1, $4}')
-part_boot=$(dialog --stdout --menu "Select boot partition" 0 0 0 ${part_list}) || exit 1
-clear
-part_list=$(echo "$part_list" | grep -v "$part_boot")
-part_root=$(dialog --stdout --menu "Select root partition" 0 0 0 ${part_list}) || exit 1
-clear
-part_list=$(echo "$part_list" | grep -v "$part_root")
-part_swap=$(dialog --stdout --menu "Select swap partition" 0 0 0 ${part_list}) || exit 1
+echo "Installing arch on $device with"
+echo "HOSTNAME: $hostname"
+echo "USERNAME: $username"
+echo
+echo "Drive $device with be wiped and the following partitions with be created..."
+echo "ESP: 550MB"
+echo "SWAP: ${swap_size}MB"
+echo "ROOT: Rest of Drive"
+echo
+echo -n "Do you wish to continue? [Y/n] "
+
+read confirm
+[[ $confirm == "n" ]] && exit 1
 
 ### Install Start ###
 
+# partition drive
+parted --script "${device}" mklabel gpt \
+    mkpart ESP fat32 1Mib 551MiB \
+    set 1 boot on \
+    mkpart primary linux-swap 551MiB ${swap_end} \
+    mkpart primary ext4 ${swap_end} 100%
+
+part_boot="${device}1"
+part_swap="${device}2"
+part_root="${device}3"
+
+echo "$part_boot $part_swap $part_root"
+
+echo -n "Do you wish to continue? [Y/n] "
+read confirm
+[[ $confirm == "n" ]] && exit 1
+
+# set time and refresh keys
 timedatectl set-ntp true
 echo 'Refreshing keyring...'
 pacman-key --refresh-keys
