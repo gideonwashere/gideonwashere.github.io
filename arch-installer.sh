@@ -34,7 +34,7 @@ echo
 echo -n "Retype admin password: "
 read -s password2
 echo
-if [[ "$password" == "$password2" ]] ; then
+if [[ ! "$password" == "$password2" ]] ; then
     echo "Passwords did not match"
     exit 1
 fi
@@ -76,13 +76,6 @@ parted --script "${device}" mklabel gpt \
 part_boot="${device}1"
 part_swap="${device}2"
 part_root="${device}3"
-
-echo "Partitions created..."
-lsblk
-echo "BOOT: $part_boot | SWAP: $part_swap | ROOT: $part_root"
-echo -n "Continue with these partitions? [Y/n] "
-read confirm2
-[[ ${confirm2,,} == "n" ]] && exit 1
 
 # set time and refresh keys
 timedatectl set-ntp true
@@ -190,6 +183,7 @@ fi
 # Enable networkmanager and ufw
 arch-chroot /mnt systemctl enable NetworkManager.service
 arch-chroot /mnt systemctl enable ufw.service
+arch-chroot /mnt ufw enable
 
 # remove programs
 arch-chroot /mnt pacman -R --noconfirm nano
