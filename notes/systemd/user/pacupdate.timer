@@ -1,0 +1,10 @@
+[Unit]
+Description=Runs pacupdate once per week
+
+[Timer]
+OnCalendar=weekly
+Persistent=true
+RandomizedDelaySec=60
+
+[Install]
+WantedBy=timers.target
