@@ -41,8 +41,10 @@ server {
 }
 EOF
 
+systemctl enable --now nginx
+
 ln -s /etc/nginx/sites-available/adarkroom /etc/nginx/sites-enabled/
 
-systemctl enable --now nginx
+systemctl restart nginx
 
 echo "Setup done, navigate to http://$SERVER_NAME to test server."
