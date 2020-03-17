@@ -27,7 +27,7 @@ ufw allow 'Nginx Full'
 ufw --force enable
 
 # Copy A Dark Room files to /var/www/adarkroom
-git clone https://github.com/doublespeakgames/adarkroom.git /var/www/
+git clone https://github.com/doublespeakgames/adarkroom.git /var/www/adarkroom
 
 # Configure nginx
 cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.default
