@@ -77,7 +77,7 @@ read confirm
 parted --script "${device}" mklabel gpt \
     mkpart ESP fat32 1Mib 551MiB \
     set 1 boot on \
-    mkpart primary linux-swap 551MiB ${swap_end} \
+    mkpart swap linux-swap 551MiB ${swap_end} \
     mkpart primary ext4 ${swap_end} 100%
 
 part_boot="${device}1"
