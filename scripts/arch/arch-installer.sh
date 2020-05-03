@@ -113,6 +113,11 @@ cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.bak
 curl -s "https://www.archlinux.org/mirrorlist/?country=US&protocol=https&ip_version=4&ip_version=6&uuse_mirror_status=on" | sed -e 's/^#Server/Server/' -e '/^## U/d' | rankmirrors -n 5 - > /etc/pacman.d/mirrorlist
 
 # begin arch install
+# Packages
+# base linux-zen linux-firmware base-devel
+# USERSPACE e2fsprogs, btrfs-progs, exfat-utils, dosfstools
+# MAN man-db man-pages texinfo
+# OTHER intel-ucode networkmanager ufw neovim git
 pacstrap /mnt base linux linux-firmware base-devel \
               e2fsprogs dosfstools exfat-utils \
               man-db man-pages texinfo \
