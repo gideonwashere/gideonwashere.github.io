@@ -66,3 +66,31 @@ lxc launch ubuntu:16.04 my-ubuntu
 lxc launch ubuntu-daily:18.04 my-ubuntu-dev
 lxc launch images:centos/6/amd64 my-centos
 ```
+
+## Forwarding host ports to lxc container
+
+lxd provides the `proxy` device, that allows you to map a host port to the container port. This can be used to forward requests to a reverse proxy running in a container.
+
+```
+$ lxc config device add $NAME $DEVICENAME proxy listen=tcp:0.0.0.0:$HOSTPORT connect=tcp:127.0.0.1:$SERVPORT
+```
+
+The command that creates the proxy device is made of the following components.
+
+* `lxc config device add` adds a new device.
+* `proxy` adding a LXD Proxy Device.
+* `listen=tcp:0.0.0.0:80` listen (on the host by default) on all network interfaces on TCP port 80.
+* `connect=tcp:127.0.0.1:80` connect (to the container by default) to the existing TCP port 80 on localhost.
+
+Be sure to add proxy protocol to the webserver config. e.g. for nginx
+
+```
+server {
+    listen 80 proxy_protocol;
+
+    ...
+
+}
+```
+
+Now requests comming in to the host on port 80 will be forwarded with the proxy protocol to the containers port 80.
