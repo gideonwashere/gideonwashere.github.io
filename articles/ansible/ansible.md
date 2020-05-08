@@ -5,7 +5,7 @@ Ansible is an open-source software provisioning, configuration management, and a
 
 ## Articles
 
-* [Simple Ansible Tutorial](./ansible-getting-started.md)
+* [Getting Started with Ansible](./ansible-getting-started.md)
 
 ## References
 
