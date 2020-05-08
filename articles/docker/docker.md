@@ -1,5 +1,7 @@
 # Docker
 
+![Docker Logo][logo]
+
 Docker is a platform for developers and sysadmins to build, run and share applications with containers.
 Documentation for docker is available at [docs.docker.com](https://docs.docker.com/get-started/).
 
@@ -99,4 +101,6 @@ You can use Dockerhub to share images if you want. Check the docs [here](https:/
 `docker load -i <docker-image.tar>`
 
 
-## Glossary
+## References
+
+[logo]: https://upload.wikimedia.org/wikipedia/commons/4/4e/Docker_%28container_engine%29_logo.svg "Docker Logo"

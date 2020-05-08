@@ -1,5 +1,7 @@
 # Jake's Wiki
 
+[gimmick:theme](flatly)
+
 [Home](index.md)
 [Server](articles/server/pi4server.md)
 [Fedora](articles/fedora/setup.md)
