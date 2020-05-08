@@ -19,7 +19,7 @@
 
 ## dwm
 
-[./articles/dwm/*.md](./articles/dwm/*.md)
+[./articles/dwm/patch-list.md](./articles/dwm/patch-list.md)
 
 ## fedora
 
@@ -54,7 +54,7 @@
 
 ## systemd
 
-[./articles/systemd/*.md](./articles/systemd/*.md)
+[./articles/systemd/systemd-notes.md](./articles/systemd/systemd-notes.md)
 
 ## tmux
 
