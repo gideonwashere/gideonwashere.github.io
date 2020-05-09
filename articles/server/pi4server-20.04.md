@@ -67,6 +67,12 @@ lxc launch ubuntu-daily:18.04 my-ubuntu-dev
 lxc launch images:centos/6/amd64 my-centos
 ```
 
+## Setup shared directory
+
+lxd `disk` device can be used to map a folder in the container to a folder on the host. e.g.
+
+`lxc config device add $NAME $DEVNAME disk source=/opt path=opt`
+
 ## Forwarding host ports to lxc container
 
 lxd provides the `proxy` device, that allows you to map a host port to the container port. This can be used to forward requests to a reverse proxy running in a container.
