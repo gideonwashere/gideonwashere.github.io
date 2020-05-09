@@ -2,12 +2,10 @@
 
 echo "# Index" > index.md
 
-for dir in ./articles/*/
+for file in $(find articles -name "*.md")
 do
-    echo "${dir}" | awk -F\/ '{printf "\n## %s\n\n", $3}' >> index.md
-    for file in ${dir}*.md
-    do
-        echo "[${file}](${file})" >> index.md
-    done
+    name=$(echo "$file" | awk -F "/" '{print $NF}' | sed 's/\.md//g')
+    echo "[$name]($file)" >> index.md
 done
+
 

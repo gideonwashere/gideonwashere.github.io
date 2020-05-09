@@ -1,3 +1,5 @@
+# Arch Install Notes
+
 1. Pre-installation
     a. Make bootable .iso and verify signature
     b. Check if EFI or BIOS: ls /sys/firmware/efi/efivars

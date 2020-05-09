@@ -1,65 +1,21 @@
 # Index
-
-## ansible
-
-[./articles/ansible/ansible.md](./articles/ansible/ansible.md)
-
-## arch
-
-[./articles/arch/partition-btrfs.md](./articles/arch/partition-btrfs.md)
-
-## awesome
-
-[./articles/awesome/*.md](./articles/awesome/*.md)
-
-## docker
-
-[./articles/docker/docker-compose.md](./articles/docker/docker-compose.md)
-[./articles/docker/docker.md](./articles/docker/docker.md)
-
-## dwm
-
-[./articles/dwm/patch-list.md](./articles/dwm/patch-list.md)
-
-## fedora
-
-[./articles/fedora/setup.md](./articles/fedora/setup.md)
-
-## gnome
-
-[./articles/gnome/notes.md](./articles/gnome/notes.md)
-
-## i3
-
-[./articles/i3/*.md](./articles/i3/*.md)
-
-## laptop
-
-[./articles/laptop/*.md](./articles/laptop/*.md)
-
-## mdwiki
-
-[./articles/mdwiki/mdwiki.md](./articles/mdwiki/mdwiki.md)
-
-## server
-
-[./articles/server/nextcloud.md](./articles/server/nextcloud.md)
-[./articles/server/notes.md](./articles/server/notes.md)
-[./articles/server/pi4server-20.04.md](./articles/server/pi4server-20.04.md)
-[./articles/server/pi4server.md](./articles/server/pi4server.md)
-
-## shell
-
-[./articles/shell/*.md](./articles/shell/*.md)
-
-## systemd
-
-[./articles/systemd/systemd-notes.md](./articles/systemd/systemd-notes.md)
-
-## tmux
-
-[./articles/tmux/tmux-notes.md](./articles/tmux/tmux-notes.md)
-
-## transmission
-
-[./articles/transmission/transmission.md](./articles/transmission/transmission.md)
+[systemd-notes](articles/systemd/systemd-notes.md)
+[patch-list](articles/dwm/patch-list.md)
+[setup](articles/fedora/setup.md)
+[homelab](articles/homelab/homelab.md)
+[docker](articles/docker/docker.md)
+[docker-compose](articles/docker/docker-compose.md)
+[wm-progs](articles/wm-progs.md)
+[transmission](articles/transmission/transmission.md)
+[btrfs](articles/btrfs.md)
+[notes](articles/gnome/notes.md)
+[partition-btrfs](articles/arch/partition-btrfs.md)
+[arch-install-notes](articles/arch/arch-install-notes.md)
+[ansible-getting-started](articles/ansible/ansible-getting-started.md)
+[ansible](articles/ansible/ansible.md)
+[nextcloud](articles/server/nextcloud.md)
+[notes](articles/server/notes.md)
+[pi4server](articles/server/pi4server.md)
+[pi4server-20.04](articles/server/pi4server-20.04.md)
+[tmux-notes](articles/tmux/tmux-notes.md)
+[mdwiki](articles/mdwiki/mdwiki.md)
