@@ -13,3 +13,7 @@
   * [Getting Started](articles/ansible/ansible-getting-started.md)
 
 [Home Lab](articles/homelab/homelab.md)
+[Go]()
+
+  * [Basics](articles/go/basics.md)
+  * [Types](articles/go/types.md)
