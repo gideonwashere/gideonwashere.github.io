@@ -17,3 +17,8 @@
 
   * [Basics](articles/go/basics.md)
   * [Types](articles/go/types.md)
+  * [Collection Types](articles/go/collections.md)
+  * [Control Flow](articles/go/control.md)
+  * [Methods](articles/go/methods.md)
+  * [Interfaces](articles/go/interfaces.md)
+  * [Concurrency](articles/go/concurrency.md)
