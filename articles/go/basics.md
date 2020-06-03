@@ -205,3 +205,83 @@ Best practice is to specify three folders in your GOPATH:
 * The `src` folder contains all the Go source code organized by import path.
 
 When atarting a new program or library, it is recommended to do so inside the `src` folder, using a fully qualifed path (e.g. `github.com/<username>/<project name>`)
+
+## Exports
+
+After importing a package, you can refer to the names it exports (variables, methods, and functions available from outside the package). In Go, a name is exported if it begins with a capital letter. Essentially like public methods. Names that begin with lower case letters are not exported essentially private functions.
+
+## Functions
+
+When declaring functions, the type comes after the variable name in the inputs. The return type(s) are then specified after the function name and inputs, before writing the definition. Functions can be defined to return any number of values and each of them are put here.
+
+```
+package main
+import "fmt"
+
+func add(x int, y int) int {
+    return x + y
+}
+
+func main() {
+    fmt.Println(add(5, 10))
+}
+```
+
+One type declaration can also be applied to multiple parameters.
+
+```
+package main
+import "fmt"
+
+func add(x, y int) int {
+    return x + y
+}
+
+func main() {
+    fmt.Println(add(5, 10))
+}
+```
+
+Functions can return multiple values.
+
+```
+func example(input string) (string, string) {
+    // do stuff
+
+    return string1, string2
+}
+```
+
+## Named Results
+
+Functions take parameters. In Go, functions can return multiple "result parameters", not just a single value. They can be named and act just like variables. If the result arameters are named, a return statement without arguments returns the current values of the results.
+
+```
+func example(x, y int) (out1, out2 int) {
+    out1 = x
+    out2 = y
+
+    return // returns out1 and out2
+}
+```
+
+Although this is cool, named results tend to cause more confusion than clarity. So, thier use is generally discouraged.
+
+## Pointers
+
+Go does have pointers, but no pointer arithmetic. Struct fields can be accessed through a struct pointer. The indirection through the pointer is **transparent** (you can directly call fields and methods on a pointer)
+
+Note that by defaout Go passes argumetns by value, if you want to pass arguments by reference, you need to pass pointers (or use a structure using reference values like *slices* and *maps*.
+
+To get a pointer to a value, use the `&` symbol in front of the value; to dereference a pointer, use th `*` symbol (like C).
+
+Methods are often defined on pointers and not values, so you will often store a pointer in a variable like so:
+
+```
+client := &http.Client{}
+resp, err := client.Get("http://example.com")
+```
+
+## Mutability
+
+In Go, only constants are immutable. However, because arguments are passed by value, a function recieving a value argument and mutating it, won't mutate the original value. To mutate a passed value, we need to pass it by reference, using a pointer.
