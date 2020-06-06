@@ -191,7 +191,7 @@ Retrieve an element: `elem = m[key]`
 
 Delete an element: `delete(m, key)`
 
-Test that a key is present with a two-value assignment: `elem, ok = m[key]`
+Test that a key is present with a two-value assignment: `elem, ok := m[key]`
 
 If `key` is in `m`, `ok` is true. If not, `ok` is false and `elem` is the zero value for the map's element type. When a key is not present the zero value for the maps element type is returned.
 
