@@ -1,3 +1,5 @@
+> WIP
+
 # About
 
 Hi! My name is Jake Scott. I'm a professional data analyst, hobbyist programmer, and Linux enthusiast.

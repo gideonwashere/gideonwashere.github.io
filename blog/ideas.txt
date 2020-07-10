@@ -5,4 +5,7 @@ gpu undervolt
 my pc build
 making a blog site
 wsl
-
+dwm patching
+window managers
+desktop environments
+server setup
