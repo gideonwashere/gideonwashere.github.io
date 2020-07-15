@@ -1,122 +1,61 @@
-# Notes on my piserver
+# Ubuntu Server 20.04 on Rapberry Pi 4
 
-* Running ubunut arm 19.10
-* Flash image to SD card
-* SSH in and update
+I want to set up nextcloud with an external hard drive on my raspberry pi. Ubuntu server seems the best candidate for the job. Download the image [here](https://ubuntu.com/download/raspberry-pi).
 
-## Packages to Install
-| Package  | Description                           |
-|----------|---------------------------------------|
-|glances   | Nice system monitoring tool           |
-|ddclient  | Dynamic DNS update service            |
-|fail2ban  | Bans host with multiple failed logins |
-|net-tools | Nice tools including netstat          |
-
-## Set up login with ssh keys
-* Generate a new key
-`ssh-keygen -t ed25519 -C <comment> -f <filename>`
-* copy public key to server `ssh-copy-id -i /path/to/key.pub user@server.com`
-
-## Set up firewall
-
-Set ufw (uncomplicated firewall) to deny everything,
-but allow limited access to ssh (port 22)
-```
-sudo su
-ufw default deny incoming
-ufw default allow outgoing
-ufw limit 22/tcp
-ufw enable
-ufw status
-exit
-```
-
-## Disable password auth for SSH
-In `/etc/ssh/sshd_config`
-
-* ChallengeResponseAuthentication no
-* PasswordAuthentication no
-* UsePAM no
-* PermitRootLogin no
-
-
-## Enable additional security features
-In `/etc/sysctl.conf` uncomment the following lines
-
-* net.ipv4.conf.default.rp\_filter=1
-* net.ipv4.conf.all.rp\_filter=1
-* net.ipv4.conf.all.accept\_redirects = 0
-* net.ipv6.conf.all.accept\_redirects = 0
-* net.ipv4.conf.all.send\_redirects = 0
-* net.ipv4.conf.all.accept\_source\_route = 0
-* net.ipv6.conf.all.accept\_source\_route = 0
-* net.ipv4.conf.all.log\_martians = 1
-
-## Tweak host config
-In `/etc/host.conf` add
-```
-order bind,hosts
-nospoof on
-```
->nospoof on causes and error, not sure why
-just leave it off for now.
-
-## Enable Fail2ban
-Enable Fail2ban with
-```
-sudo systemctl enable fail2ban
-sudo systemctl start fail2ban
-```
-
-## Set up DDNS
-For namecheap ddns edit `/etc/ddclient.conf`
+You can install this image to an SD card using `dd`. Check which partiotion the card coresponds to using `lsblk`. In my case its `/dev/sda`. Then run
 
 ```
-daemon=3600
-pid=/var/run/ddclient.pid
-ssl=yes
-use=web, web=dynamicdns.park-your-domain.com/getip
-protocol=namecheap
-server=dynamicdns.park-your-domain.com
-login=<domainname.com>
-password=<ddns password>
-<subdomain>
+dd bs=4M if=ubuntu-20.04.img of=/dev/sda conv=fsync status='progress'
 ```
 
-Test with
-`sudo ddclient -daemon=0 -debug -verbose -noquiet`
+Once the image is installed you should be able to ssh into the pi with user and password `ubuntu`.
 
-Start and enable ddclient.service
+Ensure system is up to date with `sudo apt update && sudo apt upgrade`. It's also a good idea to reboot if there was a kernel update.
+
+## Booting raspberry pi from ssd
+
+By default the pi uses an SD card as the os device. SD cards are not very reliable and are limited to ~ 50Mbps of bandwidth so it's generally advisable to boot from an external hard drive.
+
+[See instruction here](https://www.tomshardware.com/how-to/boot-raspberry-pi-4-usb)
+
+## Making a new user
+
+I like to make a personal user, delete the default and change the hostname. Here are the steps:
+
+Change the hostname
+
+`$ sudo hostnamectl set-hostname $NAME`
+
+Add new user and add to same groups as user `ubuntu`. Check groups with the `groups` command.
+
+```bash
+$ sudo adduser $USER
+
+$ sudo usermod -aG sudo,and,all,other,groups $USER
+```
+
+Log out and log back in as $USER then
 
 ```
-sudo systemctl enable ddclient.service
-sudo systemctl start ddclient.service
+$ deluser ubuntu && delgroup ubuntu
 ```
 
-## Finishing up
-* `netstat -tunlp` to check listening ports
-* `ufw status` for checking firewall
-* `glances` to check running status
-* Check `/var/log/auth.log` for system logs
+## Mounting external drive on startup
 
+Note that nextcloud snap will only have access to `/media` or `/mnt` so make sure you use one of these as your mount point. I'm going to use `/media/storage`.
 
-## Additional Notes
+First create the mountpoint `sudo mkdir -vp /media/storage`
 
-### Wifi
-* Install `rfkill` and `wireless-tools`
-* `wpasupplicant` is already installed.
+Add a `data` group so non root users can access the storage `sudo groupadd data` and add users to group `sudo usermod -aG data $USER`. Change group for folder `sudo chown -R :data /media/storage`
 
-### OpenVPN
+Now check which drive you want with lsblk. In my case we are looking for the partition `/dev/sda1`, we want to mount by UUID to avoid any mount mistakes. Grab the UUID with `sudo blkid -s UUID -o value /dev/sda1`
 
-* Refer to repo: https://github.com/angristan/openvpn-install
-* This will do a lot of security stuff and create a `client.ovpn` file in $HOME
+Add the entry to `/etc/fstab`. As root
 
-#### Setting up Clients
-* Copy the `client.ovpn` to the client machine.
-* Install openvpn on client, copy .ovpn file to `/etc/openvpn/client`
-* Run `openvpn client.ovpn`
-* `curl ifconig.me` should bring up vpn's ip-address
-* Pluginin available for networkmanager `networkmanager-openvpn`
+```
+echo "UUID=$(blkid -s UUID -o value /dev/sda1) /media/storage auto nosuid,nodev,nofail,noatime 0 2 >> /etc/fstab
+```
 
-### Nextcloud
-* Nextcould snap available on ubuntu server.
+## Setting up Nextcloud
+
+Since we are using ubuntu, the easiest way to get nextcloud up and running is through the snap package. Just run `snap install nextcloud
