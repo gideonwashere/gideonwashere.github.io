@@ -1,2 +1,2 @@
-# jakesco.github.io
-My GitHub Website
+# tetris
+Tetris written in javascript.

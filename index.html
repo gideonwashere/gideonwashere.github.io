@@ -1,189 +1,43 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<html lang="en">
+
 <head>
-  <meta charset="utf-8" />
-  <meta name="generator" content="pandoc" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>Jake Scott's CV</title>
-  <style>
-    code{white-space: pre-wrap;}
-    span.smallcaps{font-variant: small-caps;}
-    span.underline{text-decoration: underline;}
-    div.column{display: inline-block; vertical-align: top; width: 50%;}
-    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-    ul.task-list{list-style: none;}
-  </style>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
-  <style type="text/css">
-  /*
-   * Copyright 2013 Christophe-Marie Duquesne <chmd@chmd.fr>
-   *
-   * CSS for making a resume with pandoc. Inspired by moderncv.
-   *
-   * This CSS document is delivered to you under the CC BY-SA 3.0 License.
-   * https://creativecommons.org/licenses/by-sa/3.0/deed.en_US
-   */
+  <meta charset="UTF-8">
+  <meta name="description" content="Tetris!">
 
-  /* Whole document */
-  body {
-      font-family: "Calibri", Calibri, Arial, sans-serif;
-  /*  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; */
-      max-width: 800px;
-      margin: auto;
-      background: #FEFFFE;
-      padding: 10px 10px 10px 10px;
-  }
+  <link rel="shortcut icon" href="#" />
+  <link rel="stylesheet" href="styles.css">
 
-  /* Title of the resume */
-  h1 {
-      font-size: 55px;
-      color: #393E41;
-      text-align:center;
-      margin-bottom:15px;
-  }
-  /* h1:hover { */
-  /*     background-color: #757575; */
-  /*     color: #FFFFFF; */
-  /*     text-shadow: 1px 1px 1px #333; */
-  /* } */
+  <script type="text/javascript" src="resources.js" defer></script>
+  <script type="text/javascript" src="piece.js" defer></script>
+  <script type="text/javascript" src="game.js" defer></script>
+  <script type="text/javascript" src="main.js" defer></script>
 
-  /* Titles of categories */
-  h2 {
-      /* This is called "sectioncolor" in the ConTeXt stylesheet. */
-      color: #393E41;
-  }
-  /* There is a bar just before each category */
-  h2:before {
-      content: "";
-      display: inline-block;
-      margin-right:1%;
-      width: 16%;
-      height: 10px;
-      /* This is called "rulecolor" in the ConTeXt stylesheet. */
-      background-color: #8B8BAE;
-  }
-  /* h2:hover { */
-  /*     background-color: #397249; */
-  /*     color: #FFFFFF; */
-  /*     text-shadow: 1px 1px 1px #333; */
-  /* } */
-
-  /* Definitions */
-  dt {
-      float: left;
-      clear: left;
-      width: 17%;
-      font-weight: bold;
-  }
-  dd {
-      margin-left: 17%;
-      margin-bottom:7px;
-  }
-  p {
-      margin-top:0;
-      margin-bottom:7px;
-  }
-
-  /* Blockquotes */
-  blockquote {
-      text-align: center
-  }
-
-  /* Links */
-  a {
-      text-decoration: none;
-      color: #44BBA4;
-  }
-  a:hover, a:active {
-      background-color: #FFFFFF;
-      color: #77EED7;
-      text-decoration: none;
-  /*  text-shadow: 1px 1px 1px #333;
-  }
-
-  /* Horizontal separators */
-  hr {
-      color: #A6A6A6;
-  }
-
-  table {
-      width: 100%;
-  }
-  </style>
+  <title>Tetris</title>
 </head>
+
 <body>
-<h1 id="jake-scott">Jake Scott</h1>
-<hr />
-<blockquote>
-<p><a href="mailto:scottj1123@gmail.com" class="email">scottj1123@gmail.com</a></p>
-</blockquote>
-<hr />
-<h2 id="education">Education</h2>
-<dl>
-<dt>2020 (expected)</dt>
-<dd><p><strong>BS, Computer Science</strong>; Southern Oregon University (Ashland, OR)</p>
-<p><em>Capstone: <a href="https://factbook.sou.edu/" target="_blank">Interactive Factbook</a> web application</em><br />
-<em>Awards: Post-baccalaureate of the Year</em></p>
-</dd>
-<dt>2014</dt>
-<dd><p><strong>PSM, Applied Mathematics</strong>; Southern Oregon University (Ashland, OR)</p>
-<p><em>Thesis: Unsupervised phoneme classification using expectation maximization</em></p>
-</dd>
-<dt>2012</dt>
-<dd><p><strong>BS, Mathematics</strong>; Southern Oregon University (Ashland, OR)</p>
-<p><em>Minor: Psychology</em><br />
-<em>Awards: Eugene Bowman Senior of the Year, Calculus Scholar, Capstone of the Year</em></p>
-</dd>
-</dl>
-<h2 id="work-experience">Work Experience</h2>
-<dl>
-<dt>2015-present</dt>
-<dd><strong>Reporting and Data Analyst</strong>; Southern Oregon University<br />
-<br />
-<strong>Develop new tools and processes</strong> to make data collection and reporting more efficient. Respond to ad-hoc data requests from government institutions, university faculty and staff, and student researchers. Maintain SOU’s I*Reports system which is a collection of interactive reports developed with IBM Cognos business intelligence software. Create <strong>data dashboards</strong> and visualizations to make data easily digestible. Use <strong>predictive analytics</strong> and descriptive statistics to aid executives in decision making.
-</dd>
-<dt>2012-2015</dt>
-<dd><strong>Adjunct Professor</strong>; Rogue Community College and Southern Oregon University<br />
-<br />
-Instructor for a variety of math classes including <em>Intro to Statistical Methods</em>, <em>College Algebra</em>, and <em>High-school Algebra</em>. Students’ average rating of teaching effectiveness was 6.5 out of 7.
-</dd>
-</dl>
-<h2 id="technical-experience">Technical Experience</h2>
-<dl>
-<dt>Projects</dt>
-<dd><strong>Interactive Factbook:</strong> Lead a team of Computer Science students in building the <a href="https://factbook.sou.edu/" target="_blank">SOU Interactive Factbook</a>. Created using the Python web framework <strong>Django</strong>. <strong>Desiged the backend factbook database</strong> as well as query logic for end user report generation. <strong>Wrote ETL scripts</strong> for populating the Factbook data warehouse from the main SOU database and other data sources. Developed and currently maintain the Interactive Factbook <strong>Docker</strong> image. Continue to <strong>ensure the Factbook container runs smoothly in production</strong>.
-</dd>
-<dd><p><strong>Executive Report Generation Tool:</strong> The Institutional Research Office generates many reports on a weekly basis. These executive reports often took upwards of 4 hours to generate by hand. Using <strong>Python</strong>, I developed a script to automatically generate these reports in less than 1 minute.</p>
-</dd>
-<dd><p><strong>Student Retention Model:</strong> Developed a mathematical model using <strong>logistic regression</strong> to predict students’ likelihood of persistence. The model can predict student retention with 80% accuracy. Students who show high dropout risk are recommended to SOU’s Student Support Services department.</p>
-</dd>
-<dt>Programming Languages</dt>
-<dd><strong>Python:</strong> Built several automation tools for personal and office use. Expierenced with <strong>Object-oriented</strong> Python programming, as well as <strong>Django</strong> and <strong>Flask</strong> web frameworks.
-</dd>
-<dd><p><strong>SQL:</strong> Write ad-hoc queries for <strong>Oracle SQL</strong> database daily. Occasionally perform maintenance on <strong>ETL scripts</strong> for SOU’s data warehouse. Completed database coursework in <strong>MySQL</strong>.</p>
-</dd>
-<dd><p><strong>Java:</strong> Code for my thesis was written in Java and most of my formal education is in Java.</p>
-</dd>
-<dd><p><strong>Bash:</strong> Write many personal scripts in bash. Have a number of scripts, both simple and complex, in my <a href="https://github.com/jakesco/dotfiles/tree/master/desktop/.local/scripts" target="_blank">dotfiles repository</a>. Maintain an <a href="https://github.com/jakesco/arch-installer" target="_blank">Arch Linux</a> install script written in bash.</p>
-</dd>
-<dd><p>Basic knowledge of <strong>C</strong>, <strong>R</strong>, <strong>Haskell</strong>, <strong>Go</strong></p>
-</dd>
-</dl>
-<h2 id="personal-projects">Personal Projects</h2>
-<dl>
-<dt>Home Lab</dt>
-<dd>I maintain a home lab for use as a server and testing ground for new technologies. I host a <strong>nextcloud</strong> instance for family use as well as a Discord bot and some other web based python tools. My home lab runs on Fedora Linux.
-</dd>
-<dt>Linux and Open Source</dt>
-<dd>I love Linux and open source. In my free time I enjoy customizing my desktop environment and expierementing with new software. I maintain an <a href="https://github.com/jakesco/arch-installer" target="_blank">Arch Linux installer</a> script written in bash. I’ve contributed to some open source projects, such as <a href="https://github.com/Stargarth/Goblocks" target="_blank">Goblocks</a>, and maintian my own custom build of <a href="https://github.com/jakesco/dwm" target="_blank">dwm</a> (dynamic window manager).
-</dd>
-</dl>
-<hr />
-<ul>
-<li>Interactive Factbook at: <a href="https://factbook.sou.edu/" target="_blank">https://factbook.sou.edu</a></li>
-<li>My GitHub Account: <a href="https://github.com/jakesco" target="_blank">https://github.com/jakesco</a></li>
-</ul>
+  <div class="grid">
+    <canvas id="board" class="game-board"></canvas>
+    <div class="right-column">
+      <h1>Tetris</h1>
+      <fieldset>
+        <legend>Next</legend>
+        <canvas id="next" class="next-peice"></canvas>
+      </fieldset>
+      <fieldset>
+        <legend>Held</legend>
+        <canvas id="held" class="held-peice"></canvas>
+      </fieldset>
+      <div class="stats">
+        <p><strong>Lines: </strong> <span id="lines">0</span></p>
+        <p><strong>Level: </strong> <span id="level">0</span></p>
+        <div>
+          <div>
+            <button class="play-button" onclick="play()">Play</button>
+          </div>
+        </div>
+      </div>
 </body>
+
 </html>

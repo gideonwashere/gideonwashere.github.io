@@ -4,12 +4,13 @@ var ctxNext = document.getElementById('next').getContext('2d');
 var ctxHeld = document.getElementById('held').getContext('2d');
 
 let b, time;
+b = new Board(ctxBoard, ctxNext, ctxHeld);
+addEventListener();
 init();
 
 function play() {
-    time = { start: 0, elapsed: 0, level: 1000 };
-    b = new Board(ctxBoard, ctxNext, ctxHeld);
-    addEventListener();
+    time = { start: 0, elapsed: 0, level: LEVEL[5] };
+    b.reset();
     requestAnimationFrame(animate);
 }
 
@@ -18,7 +19,7 @@ function animate(now = 0) {
     if (time.elapsed > time.level) {
         time.start = now;
 
-        if(!b.paused)
+        if (!b.paused)
             b.drop();
     }
 
@@ -38,22 +39,28 @@ function addEventListener() {
     document.addEventListener('keydown', event => {
         event.preventDefault();
 
-        if(!b.paused) {
-        switch (event.keyCode) {
-            case KEY.LEFT:
-                b.left();
-                break;
-            case KEY.RIGHT:
-                b.right();
-                break;
-            case KEY.DOWN:
-                b.drop();
-                break;
-            case KEY.UP:
-                b.rotate();
-                break;
+        if (!b.paused) {
+            switch (event.keyCode) {
+                case KEY.LEFT:
+                    b.left();
+                    break;
+                case KEY.RIGHT:
+                    b.right();
+                    break;
+                case KEY.DOWN:
+                    b.drop();
+                    break;
+                case KEY.SPACE:
+                    b.hardDrop();
+                    break;
+                case KEY.UP:
+                    b.rotate();
+                    break;
+                case KEY.Z:
+                    b.hold();
+                    break;
+            }
         }
-    }
     });
 }
 

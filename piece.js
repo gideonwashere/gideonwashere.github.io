@@ -1,10 +1,12 @@
 class Piece {
+    type;
     shape;
     ctx;
     xPos = 0;
     yPos = 0;
-    constructor(ctx, shape) {
-        this.shape = SHAPES[shape];
+    constructor(ctx, type) {
+        this.type = type;
+        this.shape = SHAPES[type];
         this.ctx = ctx;
     }
 
@@ -12,9 +14,14 @@ class Piece {
         this.ctx = ctx;
     }
 
-    adjust() {
-        this.xPos = 3;
+    setStartPosition() {
+        this.xPos = 3
         this.yPos = -2;
+    }
+
+    setDisplayPosition() {
+        this.xPos = 0;
+        this.yPos = 0;
     }
 
     draw() {
