@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on Jake&#39;s Blog</title>
+    <link>https://jakesco.com/posts/</link>
+    <description>Recent content in Posts on Jake&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Mon, 23 Nov 2020 13:36:37 -0800</lastBuildDate>
+    
+	<atom:link href="https://jakesco.com/posts/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    
+    <item>
+      <title>Hosting a Remote Git Repository at Home</title>
+      <link>https://jakesco.com/hosting-a-remote-git-repository-at-home/</link>
+      <pubDate>Mon, 23 Nov 2020 13:36:37 -0800</pubDate>
+      
+      <guid>https://jakesco.com/hosting-a-remote-git-repository-at-home/</guid>
+      <description>My GitHub account has become cluttered with many private Git repositories over the years. I have repositories for schoolwork, tutorials, notes for my Dungeons and Dragons campaign; pretty much any text-based project gets put in a Git repository. I love being able to roll back changes and easily share work between my machines. Unfortunately, now my GitHub account is covered with private repositories, and logging in to GitHub every time I want to create a repository is a pain.</description>
+    </item>
+    
+    
+    
+    
+  </channel>
+</rss>

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Jake&#39;s Blog">
+    
+    <link rel="shortcut icon" href="https://jakesco.com/favicon.ico">
+    
+    <link rel="stylesheet" href="/css/style.min.css">
+
+    <title>Hosting a Remote Git Repository at Home</title>
+</head>
+<body><header id="banner">
+    <h2><a href="https://jakesco.com">Jake&#39;s Blog</a></h2>
+    <nav>
+        <ul>
+            <li>
+                <a href="/" title="posts">posts</a>
+            </li><li>
+                <a href="/about/" title="about">about</a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main id="content">
+<article>
+    <header id="post-header">
+        <h1>Hosting a Remote Git Repository at Home</h1><time>November 23, 2020</time></header><p>My GitHub account has become cluttered with many private Git repositories over the years.
+I have repositories for schoolwork, tutorials, notes for my Dungeons and Dragons campaign; pretty much any text-based project gets put in a Git repository.
+I love being able to roll back changes and easily share work between my machines.
+Unfortunately, now my GitHub account is covered with private repositories, and logging in to GitHub every time I want to create a repository is a pain.</p>
+<p>I recently converted an old gaming PC into a home server, and I&rsquo;ve always heard Git is pretty easy to self-host.
+So, I thought why not give it a try.
+After an afternoon of tinkering I now have a setup I enjoy using.
+I can create a new repository with <code>gits init newrepo</code>.
+Then <code>newrepo</code> is available as a remote for all my machines.
+I can also <code>gits ls</code> to list all the repositories on the server and delete repositories with <code>gits rm newrepo</code>.</p>
+<p>Here&rsquo;s how I did it.
+Self-hosting a Git remote is fairly easy as far as these things go.
+You will need to know how to log into a server with SSH and the basics of Git, and need a server running Linux to host on.
+For this post I&rsquo;m going to use <code>example.com</code> as the server name.
+My server is running Fedora Server, but the following should work on pretty much any Linux distribution.</p>
+<h1 id="basic-setup">Basic Setup</h1>
+<p>The core functionality of a git server is quick to set up.
+A Git remote repository is essentially just a folder containing a bunch of bare git repositories, which can be accessed over SSH.
+A bare git repository is everything in the <code>.git</code> folder of a normal repository.
+There is no working tree in a bare git repository, so you can&rsquo;t make comments or edit files, it just stores all the git metadata.</p>
+<p>First, we need to create a user on the server to handle git transactions.</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">$ sudo useradd -m git
+$ sudo su git
+</code></pre></div><p>Then add the necessary folders for other users to connect via SSH.</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">$ mkdir -m <span class="m">700</span> ~/.ssh/
+$ touch ~/.ssh/authorized_keys
+$ chmod <span class="m">600</span> ~/.ssh/authorized_keys
+</code></pre></div><p>Now would also be a good time to pick a directory to house your git repositories.
+The git documentation uses <code>/srv/git</code>, but I prefer to use the git user&rsquo;s home directory.
+This keeps everything in one place on the file system and makes for nicer syntax when interacting with the remote.
+To grant a user access to your Git server, copy their public ssh key to <code>/home/git/.ssh/authorized_keys</code>.
+Once you&rsquo;ve added a user&rsquo;s key you&rsquo;re done. Yep, it&rsquo;s just that easy.</p>
+<p>To create a new repository, log in to your server as <code>git</code> and create a new bare repository like so:</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">$ ssh git@example.com
+
+<span class="c1"># As git</span>
+$ mkdir ~/newrepo.git
+$ git init --bare ~/newrepo.git
+</code></pre></div><p>This will create a new directory and initialize it as a bare git repository.
+Any user with a key in <code>/home/git/.ssh/authorized_keys</code> can clone the repository with</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">$ git clone git@example.com:newrepo.git
+</code></pre></div><h1 id="create-an-interface-with-git-shell">Create an Interface with <code>git-shell</code></h1>
+<p>While all the basic Git functionality is available, we still need to log in to the server and create git repositories manually.
+It would be great to make the UX a bit nicer.
+Luckily, Git comes with <code>git-shell</code>, which is designed for this purpose.</p>
+<p>To utilize <code>git-shell</code>, create a folder <code>git-shell-commands</code> in the <code>git</code> user&rsquo;s home directory on the server.
+When a <code>git-shell</code> session is started, this folder will be used as a <code>PATH</code>, where any scripts in the directory will be available as commands.
+I&rsquo;ve created a <a href="https://git.sr.ht/~jakesco/git-shell-commands">repository</a> with the commands for my git interface.
+Feel free to copy the commands, or even easier, clone the repository into your git home directory.</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">$ <span class="nb">cd</span>
+$ git clone https://git.sr.ht/~jakesco/git-shell-commands
+</code></pre></div><p>The repository contains 4 files.</p>
+<ol>
+<li><strong>help</strong>: Prints basic usage info. This is run automatically when <code>git-shell</code> starts.</li>
+<li><strong>ls</strong>: Lists all git repositories in the git home directory.</li>
+<li><strong>init</strong>: Create a new repository with the parameter name.</li>
+<li><strong>rm</strong>: Remove a repository matching the parameter name.</li>
+</ol>
+<p>Note that these are simply shell scripts.
+You can define arbitrary commands and save them in this folder for use by <code>git-shell</code>.
+For example, here is the <code>init</code> command:</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="cp">#!/bin/sh
+</span><span class="cp"></span>
+<span class="k">if</span> <span class="o">[</span> <span class="nv">$#</span> -ne <span class="m">1</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+    <span class="nb">echo</span> <span class="s2">&#34;usage: init &lt;name&gt;&#34;</span>
+    <span class="nb">exit</span> <span class="m">1</span>
+<span class="k">fi</span>
+
+<span class="nv">base_dir</span><span class="o">=</span><span class="s2">&#34;</span><span class="nv">$HOME</span><span class="s2">&#34;</span>
+<span class="nv">new_repo</span><span class="o">=</span><span class="s2">&#34;</span><span class="nv">$1</span><span class="s2">&#34;</span>
+
+<span class="k">case</span> <span class="nv">$new_repo</span> in
+    *<span class="se">\.</span>git<span class="o">)</span>
+	<span class="p">;;</span>
+    *<span class="o">)</span>
+	<span class="nv">new_repo</span><span class="o">=</span><span class="s2">&#34;</span><span class="si">${</span><span class="nv">new_repo</span><span class="si">}</span><span class="s2">.git&#34;</span>
+	<span class="p">;;</span>
+<span class="k">esac</span>
+
+<span class="k">if</span> <span class="o">[</span> -d <span class="s2">&#34;</span><span class="nv">$new_repo</span><span class="s2">&#34;</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+    <span class="nb">echo</span> <span class="s2">&#34;</span><span class="nv">$new_repo</span><span class="s2"> already exists&#34;</span>
+    <span class="nb">exit</span> <span class="m">1</span>
+<span class="k">fi</span>
+
+mkdir <span class="s2">&#34;</span><span class="nv">$base_dir</span><span class="s2">/</span><span class="nv">$new_repo</span><span class="s2">&#34;</span>
+git init --bare <span class="s2">&#34;</span><span class="nv">$base_dir</span><span class="s2">/</span><span class="nv">$new_repo</span><span class="s2">&#34;</span> &gt;/dev/null 2&gt;<span class="p">&amp;</span>1<span class="se">\
+</span><span class="se"></span>    <span class="o">&amp;&amp;</span> <span class="nb">echo</span> <span class="s2">&#34;Initialized empty Git repository: git@</span><span class="k">$(</span>uname -n<span class="k">)</span><span class="s2">:</span><span class="nv">$new_repo</span><span class="s2">&#34;</span>
+</code></pre></div><p>After copying the git shell commands, our home directory should look like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">$ tree -a /home/git
+.
+├── git-shell-commands
+│   ├── <span class="nb">help</span>
+│   ├── init
+│   ├── ls
+│   └── rm
+│
+└── .ssh
+    └── authorized_keys
+</code></pre></div><p>All that&rsquo;s left to do is change the git user&rsquo;s default shell to <code>git-shell</code>.</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">$ sudo chsh git -s <span class="k">$(</span>which git-shell<span class="k">)</span>
+</code></pre></div><p>Now when any user logs into the server as <code>git</code> they will be presented with <code>git-shell</code> like so:</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">Welcome to git-shell on example.com!
+
+Available Commands:
+ls: list all repositories.
+init &lt;name&gt;: Initialize new Git repository with &lt;name&gt;
+rm &lt;name&gt;: Delete Git repository with &lt;name&gt;
+
+git&gt;
+</code></pre></div><p>You can also access these commands via SSH with</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">$ ssh git@example.com &lt;command&gt;
+</code></pre></div><p>You can make an alias for an even easier interface</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">$ <span class="nb">alias</span> <span class="nv">gits</span><span class="o">=</span><span class="s1">&#39;ssh git@example.com&#39;</span>
+</code></pre></div><p>Now you can manage the git server with <code>gits init</code>, <code>gits rm</code>, and <code>gits ls</code>.</p>
+<h1 id="additional-security">Additional Security</h1>
+<p>This setup is fine for a single user home server setup, but if you want to open this up to the internet or have multiple users, we should lock down a few things.
+First, depending on your server&rsquo;s SSH configuration, anyone with access can use their connection to create an ssh tunnel.
+Simply prepend any SSH keys in <code>/home/git/.ssh/authorized_keys</code> with <code>no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty</code>.
+So keys in the <code>authorized_keys</code> file should look like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">$ cat /home/git/.ssh/authroized_keys
+no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty ssh-rsa
+AAA...&lt;key content&gt; Description
+</code></pre></div><p>Second, I like to disable password log in for utility users like <code>git</code>.</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">$ sudo passwd -l git
+</code></pre></div><p>Now <code>git</code> can only be accessed via SSH.</p>
+<p>And there you have it, a fully functional private git server.</p>
+<h1 id="references">References</h1>
+<ul>
+<li><a href="https://git-scm.com/book/en/v2/Git-on-the-Server-Setting-Up-the-Server">Git Book</a></li>
+<li><a href="https://github.com/dylanaraps/pure-sh-bible#strip-pattern-from-end-of-string">Pure <code>sh</code> Bible</a></li>
+<li><a href="https://git.sr.ht/~jakesco/git-shell-commands">Git Shell Commands</a></li>
+</ul>
+</article>
+
+        </main><footer id="footer">
+    Copyright © 2020 Jake Scott
+</footer>
+</body>
+</html>
